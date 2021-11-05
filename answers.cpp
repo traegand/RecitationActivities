@@ -4,6 +4,12 @@
 
 using namespace std;
 
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
 /*
  * The following problems are all sourced from codingbat.com
  */
@@ -13,7 +19,7 @@ using namespace std;
   * We sleep in if it is not a weekday or we're on vacation. Return true if we sleep in.
   */
 bool SleepIn(bool weekday, bool vacation) {
-   
+    return !weekday || vacation;
 }
 
 /*
@@ -21,14 +27,19 @@ bool SleepIn(bool weekday, bool vacation) {
  * Note: abs(num) computes the absolute value of a number.
  */
 bool NearHundred(int n) {
-    
+    return abs(100 - n) <= 10 || abs(200 - n) <= 10;
 }
 
 /*
  * Given two int values, return their sum. Unless the two values are the same, then return double their sum.
  */
 int SumDouble(int a, int b) {
-    
+    return a == b ? (a + b) * 2 : a + b;
+    /* This code is the same as the following:
+     *
+     * if(a == b) return (a+b) * 2;
+     * else return a + b
+     */
 }
 
 
@@ -37,7 +48,25 @@ int SumDouble(int a, int b) {
  * Return true if the vector does not contain any triples.
  */
 bool NoTriples(vector<int> nums) {
-    
+    int currValue = 0, counter = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        if (nums.at(i) == currValue) counter++;
+        else {
+            counter = 1;
+            currValue = nums.at(i);
+        }
+        if (counter > 2) return false;
+    }
+    return true;
+    /* additional solution
+     * for(int i = 0; i < nums.size()-2; i++){
+     *  if(nums.at(i) == nums.at(i+1) && nums.at(i) == nums.at(i+2)){
+     *          return false;
+     *  }
+     * }
+     * return true;
+     */
+
 }
 
 /*
@@ -45,7 +74,19 @@ bool NoTriples(vector<int> nums) {
  * it does not count towards the sum.
  */
 int LoneSum(int a, int b, int c) {
-   
+    if (a == b) {
+        if (a == c) return 0;
+        else return c;
+    }
+    else {
+        if (a == c) {
+            return b;
+        }
+        else if (b == c) {
+            return a;
+        }
+    }
+    return a + b + c;
 }
 
 /*
@@ -54,7 +95,24 @@ int LoneSum(int a, int b, int c) {
  */
 
 int Blackjack(int a, int b) {
-    
+    if (a > 21) {
+        if (b > 21) {
+            return 0;
+        }
+        return b;
+    }
+    else {
+        if (b > 21) {
+            return a;
+        }
+    }
+    return a > b ? a : b;
+    /*
+     * this code is the same as the following:
+     *
+     * if(a > b) return a;
+     * else return b;
+     */
 }
 
 /*
@@ -62,7 +120,12 @@ int Blackjack(int a, int b) {
  */
 
 int BigDiff(int nums[], int size) {
-    
+    int max = nums[0], min = nums[0];
+    for (int i = 1; i < size; i++) {
+        if (max < nums[i]) max = nums[i];
+        if (min > nums[i]) min = nums[i];
+    }
+    return max - min;
 }
 
 /*
@@ -71,7 +134,11 @@ int BigDiff(int nums[], int size) {
  */
 
 vector<int> ShiftVectorLeft(vector<int> vec) {
-    
+    vector<int> answer(vec.size());
+    for (int i = 0; i < vec.size(); i++) {
+        answer.at(i) = vec.at((i + 1) % vec.size());
+    }
+    return answer;
 }
 
 /*
@@ -81,8 +148,29 @@ vector<int> ShiftVectorLeft(vector<int> vec) {
  */
 
 vector<int> EvenOdd(vector<int> nums) {
-    
+    vector<int> answer;
 
+    for (int i = 0; i < nums.size(); i++) {
+        if (nums.at(i) % 2 == 0) answer.insert(answer.begin(), nums.at(i));
+        else answer.push_back(nums.at(i));
+    }
+    return answer;
+
+    /* Additional Answer:
+     * vector<int> answer(nums.size());
+     * int fromFront = 0, fromBack = 0;
+     * for(int i = 0; i < nums.size(); i++) {
+     * if (nums.at(i) % 2 == 0) {
+     * answer.at(fromFront) = nums.at(i);
+     * fromFront++;
+     * }
+     * else{
+     * answer.at(answer.size()-1-fromBack) =nums.at(i);
+     * fromBack++;
+     * }
+     * }
+     * return answer;
+     */
 }
 
 /*
@@ -90,7 +178,19 @@ vector<int> EvenOdd(vector<int> nums) {
  *on one side is equal to the sum of the numbers on the other side.
  */
 bool CanBalance(vector<int> vec) {
-    
+    int currentSum = 0;
+    for (int i = 0; i < vec.size(); i++) {
+        int remainingSum = 0;
+        for (int j = i + 1; j < vec.size(); j++) {
+            remainingSum += vec.at(j);
+        }
+        currentSum += vec.at(i);
+        if (currentSum == remainingSum) {
+            return true;
+        }
+
+    }
+    return false;
 }
 
 /*
@@ -154,13 +254,13 @@ string NearHundredTests() {
 
 string SumDoubleTests() {
     if (RunTest(3, SumDouble(1, 2))
-        && RunTest(5, SumDouble(3,2))
-        && RunTest(8, SumDouble(2,2))
-        && RunTest(-1, SumDouble(-1,0))
-        && RunTest(12, SumDouble(3,3))
-        && RunTest(0, SumDouble(0,0))
-        && RunTest(1, SumDouble(0,1))
-        && RunTest(7, SumDouble(3,4))) {
+        && RunTest(5, SumDouble(3, 2))
+        && RunTest(8, SumDouble(2, 2))
+        && RunTest(-1, SumDouble(-1, 0))
+        && RunTest(12, SumDouble(3, 3))
+        && RunTest(0, SumDouble(0, 0))
+        && RunTest(1, SumDouble(0, 1))
+        && RunTest(7, SumDouble(3, 4))) {
         return "ALL TESTS PASSED";
     }
     return "TESTS FAILED";
@@ -174,7 +274,7 @@ string NoTriplesTests() {
         && RunTest(true, NoTriples({ 1, 2, 1 }))
         && RunTest(false, NoTriples({ 1, 1, 1 }))
         && RunTest(true, NoTriples({ 1, 1 }))
-        && RunTest(true, NoTriples({1}))
+        && RunTest(true, NoTriples({ 1 }))
         && RunTest(true, NoTriples({}))) {
         return "ALL TESTS PASSED";
     }
@@ -182,22 +282,22 @@ string NoTriplesTests() {
 }
 
 string LoneSumTests() {
-    if (RunTest(6, LoneSum(1,2,3))
-        && RunTest(2, LoneSum(3,2,3))
-        && RunTest(0, LoneSum(3,3,3))
-        && RunTest(9, LoneSum(9,2,2))
-        && RunTest(9, LoneSum(2,9,2))
-        && RunTest(9, LoneSum(2,2,9))
-        && RunTest(14, LoneSum(2,9,3))
-        && RunTest(9, LoneSum(4,2,3))
-        && RunTest(3, LoneSum(1,3,1))) {
+    if (RunTest(6, LoneSum(1, 2, 3))
+        && RunTest(2, LoneSum(3, 2, 3))
+        && RunTest(0, LoneSum(3, 3, 3))
+        && RunTest(9, LoneSum(9, 2, 2))
+        && RunTest(9, LoneSum(2, 9, 2))
+        && RunTest(9, LoneSum(2, 2, 9))
+        && RunTest(14, LoneSum(2, 9, 3))
+        && RunTest(9, LoneSum(4, 2, 3))
+        && RunTest(3, LoneSum(1, 3, 1))) {
         return "ALL TESTS PASSED";
     }
     return "TESTS FAILED";
 }
 
 string BlackJackTests() {
-    if (RunTest(21, Blackjack(19,21))
+    if (RunTest(21, Blackjack(19, 21))
         && RunTest(21, Blackjack(19, 21))
         && RunTest(21, Blackjack(21, 19))
         && RunTest(19, Blackjack(19, 22))
@@ -306,7 +406,7 @@ int main() {
     cout << "ShiftVectorLeft() Tests: " << ShiftVectorLeftTests() << endl;
     cout << "EvenOdd() Tests: " << EvenOddTests() << endl;
     cout << "CanBalance() Tests: " << CanBalanceTests() << endl;
-    
+
 
     return 0;
 }
